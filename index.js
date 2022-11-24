@@ -53,8 +53,6 @@ async function run() {
         });
 
 
-
-
         app.get('/categories', async (req, res) => {
             const query = {}
             const categories = await categoriesCollections.find(query).toArray();
@@ -68,10 +66,6 @@ async function run() {
             const result = await productsCollections.find(filter).toArray();
             res.send(result);
         })
-
-
-
-
 
 
         app.get('/users', async (req, res) => {
