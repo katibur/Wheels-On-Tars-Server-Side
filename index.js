@@ -3,8 +3,9 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 const port = process.env.PORT || 5000;
 
@@ -40,6 +41,8 @@ async function run() {
         const categoriesCollections = client.db('wot').collection('categories');
         const productsCollections = client.db('wot').collection('products');
         const bookingsCollection = client.db('wot').collection('bookings');
+        const paymentsCollection = client.db('wot').collection('payments');
+
 
         app.get('/jwt', async (req, res) => {
             const email = req.query.email;
@@ -78,6 +81,14 @@ async function run() {
             res.send(result);
         });
 
+
+        app.get('/bookings/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const booking = await bookingsCollection.findOne(query);
+            res.send(booking);
+        });
+
         app.get('/bookings', async (req, res) => {
             const email = req.query.email;
 
@@ -107,6 +118,38 @@ async function run() {
             const result = await bookingsCollection.insertOne(booking);
             res.send(result);
         });
+
+        app.post('/create-payment-intent', async (req, res) => {
+            const booking = req.body;
+            const price = booking.price;
+            const amount = price * 100;
+
+            const paymentIntent = await stripe.paymentIntents.create({
+                currency: 'usd',
+                amount: amount,
+                "payment_method_types": [
+                    "card"
+                ]
+            });
+            res.send({
+                clientSecret: paymentIntent.client_secret,
+            });
+        });
+
+        app.post('/payments', async (req, res) => {
+            const payment = req.body;
+            const result = await paymentsCollection.insertOne(payment);
+            const id = payment.bookingId
+            const filter = { _id: ObjectId(id) }
+            const updatedDoc = {
+                $set: {
+                    paid: true,
+                    transactionId: payment.transactionId
+                }
+            }
+            const updatedResult = await bookingsCollection.updateOne(filter, updatedDoc)
+            res.send(result);
+        })
 
     }
     finally {
