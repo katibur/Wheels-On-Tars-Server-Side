@@ -70,40 +70,34 @@ async function run() {
 
 
         app.delete('/users/admin/:id', async (req, res) => {
-            const decodedEmail = req.decoded.email;
-            const query = { email: decodedEmail };
-            const user = await usersCollection.findOne(query);
-            if (user?.role !== 'admin') {
-                return res.status(403).send({ message: 'forbidden access' });
-            }
             const id = req.params.id;
             const filter = { _id: ObjectId(id) }
             const result = await usersCollection.deleteOne(filter);
             res.send(result);
         });
 
-        app.put("/users/admin/:id", verifyJWT, async (req, res) => {
-            const decodedEmail = req.decoded.email;
-            const query = { email: decodedEmail };
-            const user = await usersCollection.findOne(query);
-            if (user?.role !== "admin") {
-                return res.status(403).send({ message: "forbidden access" });
-            }
-            const id = req.params.id;
-            const filter = { _id: ObjectId(id) };
-            const options = { upsert: true };
-            const updatedDoc = {
-                $set: {
-                    status: "verified",
-                },
-            };
-            const result = await usersCollection.updateOne(
-                filter,
-                updatedDoc,
-                options
-            );
-            res.send(result);
-        });
+        // app.put("/users/admin/:id", verifyJWT, async (req, res) => {
+        //     const decodedEmail = req.decoded.email;
+        //     const query = { email: decodedEmail };
+        //     const user = await usersCollection.findOne(query);
+        //     if (user?.role !== "admin") {
+        //         return res.status(403).send({ message: "forbidden access" });
+        //     }
+        //     const id = req.params.id;
+        //     const filter = { _id: ObjectId(id) };
+        //     const options = { upsert: true };
+        //     const updatedDoc = {
+        //         $set: {
+        //             status: "verified",
+        //         },
+        //     };
+        //     const result = await usersCollection.updateOne(
+        //         filter,
+        //         updatedDoc,
+        //         options
+        //     );
+        //     res.send(result);
+        // });
 
 
         app.get('/users/seller/:email', async (req, res) => {
@@ -151,6 +145,13 @@ async function run() {
             res.send(result);
         });
 
+        app.get('/myProducts', async (req, res) => {
+            const email = req.query.email;
+            const query = { email: email };
+            const bookings = await productsCollections.find(query).toArray();
+            res.send(bookings);
+        });
+
         app.get('/users', async (req, res) => {
             const query = {}
             const users = await usersCollection.find(query).toArray();
@@ -175,13 +176,6 @@ async function run() {
             const email = req.query.email;
             const query = { email: email };
             const bookings = await bookingsCollection.find(query).toArray();
-            res.send(bookings);
-        });
-
-        app.get('/myProducts', async (req, res) => {
-            const email = req.query.email;
-            const query = { email: email };
-            const bookings = await productsCollections.find(query).toArray();
             res.send(bookings);
         });
 
@@ -237,6 +231,7 @@ async function run() {
             const updatedResult = await bookingsCollection.updateOne(filter, updatedDoc)
             res.send(result);
         })
+
 
     }
     finally {
