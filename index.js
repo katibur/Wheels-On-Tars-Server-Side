@@ -44,6 +44,52 @@ async function run() {
         const paymentsCollection = client.db('wot').collection('payments');
 
 
+
+
+        const verifyAdmin = async (req, res, next) => {
+            const decodedEmail = req.decoded.email;
+            const query = { email: decodedEmail };
+            const user = await usersCollection.findOne(query);
+            if (user?.role !== 'admin') {
+                return res.status(403).send({ message: 'forbidden access' })
+            }
+            next();
+        };
+
+        app.get('/users/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email };
+            const user = await usersCollection.findOne(query);
+            res.send({ isAdmin: user?.role === 'admin' });
+        });
+
+        app.get('/users/admin/:id', async (req, res) => {
+            const email = req.params.email;
+            const query = { email };
+            const user = await usersCollection.findOne(query);
+            res.send({ isAdmin: user?.role === 'admin' });
+        });
+
+
+        app.delete('/users/admin/:id', async (req, res) => {
+            const decodedEmail = req.decoded.email;
+            const query = { email: decodedEmail };
+            const user = await usersCollection.findOne(query);
+            if (user?.role !== 'admin') {
+                return res.status(403).send({ message: 'forbidden access' });
+            }
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) }
+            const result = await usersCollection.deleteOne(filter);
+            res.send(result);
+        });
+
+
+
+
+
+
+
         app.get('/jwt', async (req, res) => {
             const email = req.query.email;
             const query = { email: email };
@@ -67,7 +113,13 @@ async function run() {
             const filter = { category_id: id }
             const result = await productsCollections.find(filter).toArray();
             res.send(result);
-        })
+        });
+
+        app.post('/addProduct', async (req, res) => {
+            const query = req.body;
+            const result = await productsCollections.insertOne(query);
+            res.send(result);
+        });
 
         app.get('/users', async (req, res) => {
             const query = {}
@@ -102,15 +154,11 @@ async function run() {
             const booking = req.body;
             const query = {
                 name: booking.productName,
-                price: booking.price,
-                customer: booking.customerName,
-                location: booking.location,
-                email: booking.email,
-                phone: booking.phone
+                email: booking.email
             }
             const alreadyBooked = await bookingsCollection.find(query).toArray();
 
-            if (alreadyBooked.length) {
+            if (alreadyBooked.length > 0) {
                 const message = `You already have booked ${booking.productName}`
                 return res.send({ acknowledged: false, message })
             }
