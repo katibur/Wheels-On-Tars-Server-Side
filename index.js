@@ -106,6 +106,20 @@ async function run() {
         });
 
 
+        app.get('/users/seller/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email };
+            const user = await usersCollection.findOne(query);
+            res.send({ isSeller: user?.role === 'seller' });
+        });
+        app.get('/users/buyer/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email };
+            const user = await usersCollection.findOne(query);
+            res.send({ isBuyer: user?.role === 'buyer' });
+        });
+
+
         app.get('/jwt', async (req, res) => {
             const email = req.query.email;
             const query = { email: email };
@@ -132,6 +146,7 @@ async function run() {
 
         app.post('/addProduct', async (req, res) => {
             const query = req.body;
+            console.log(query);
             const result = await productsCollections.insertOne(query);
             res.send(result);
         });
@@ -158,9 +173,15 @@ async function run() {
 
         app.get('/bookings', async (req, res) => {
             const email = req.query.email;
-
             const query = { email: email };
             const bookings = await bookingsCollection.find(query).toArray();
+            res.send(bookings);
+        });
+
+        app.get('/myProducts', async (req, res) => {
+            const email = req.query.email;
+            const query = { email: email };
+            const bookings = await productsCollections.find(query).toArray();
             res.send(bookings);
         });
 
