@@ -44,8 +44,6 @@ async function run() {
         const paymentsCollection = client.db('wot').collection('payments');
 
 
-
-
         const verifyAdmin = async (req, res, next) => {
             const decodedEmail = req.decoded.email;
             const query = { email: decodedEmail };
@@ -84,10 +82,28 @@ async function run() {
             res.send(result);
         });
 
-
-
-
-
+        app.put("/users/admin/:id", verifyJWT, async (req, res) => {
+            const decodedEmail = req.decoded.email;
+            const query = { email: decodedEmail };
+            const user = await usersCollection.findOne(query);
+            if (user?.role !== "admin") {
+                return res.status(403).send({ message: "forbidden access" });
+            }
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    status: "verified",
+                },
+            };
+            const result = await usersCollection.updateOne(
+                filter,
+                updatedDoc,
+                options
+            );
+            res.send(result);
+        });
 
 
         app.get('/jwt', async (req, res) => {
@@ -100,7 +116,6 @@ async function run() {
             }
             res.status(403).send({ accessToken: '' })
         });
-
 
         app.get('/categories', async (req, res) => {
             const query = {}
@@ -152,10 +167,13 @@ async function run() {
 
         app.post('/bookings', async (req, res) => {
             const booking = req.body;
+
             const query = {
-                name: booking.productName,
-                email: booking.email
+                productName: booking.productName,
+                email: booking.email,
+                customerName: booking.customerName
             }
+            console.log(query);
             const alreadyBooked = await bookingsCollection.find(query).toArray();
 
             if (alreadyBooked.length > 0) {
