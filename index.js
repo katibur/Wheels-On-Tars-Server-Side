@@ -39,6 +39,9 @@ async function run() {
         const productsCollections = client.db('wot').collection('products');
         const bookingsCollection = client.db('wot').collection('bookings');
         const paymentsCollection = client.db('wot').collection('payments');
+        const advertisedCollection = client.db('wot').collection('advertisedItems');
+        const wishlistCollections = client.db('wot').collection('wishlist');
+        const reportedItemsCollection = client.db('wot').collection('reportedItems');
 
 
         const verifyAdmin = async (req, res, next) => {
@@ -66,6 +69,7 @@ async function run() {
         });
 
 
+        // delete any user from AllUsers Route
         app.delete('/users/admin/:id', async (req, res) => {
             const id = req.params.id;
             const filter = { _id: ObjectId(id) }
@@ -97,12 +101,15 @@ async function run() {
         // });
 
 
+        // verification for seller
         app.get('/users/seller/:email', async (req, res) => {
             const email = req.params.email;
             const query = { email };
             const user = await usersCollection.findOne(query);
             res.send({ isSeller: user?.role === 'seller' });
         });
+
+        // verification for buyer
         app.get('/users/buyer/:email', async (req, res) => {
             const email = req.params.email;
             const query = { email };
@@ -110,6 +117,8 @@ async function run() {
             res.send({ isBuyer: user?.role === 'buyer' });
         });
 
+
+        // jwt
         app.get('/jwt', async (req, res) => {
             const email = req.query.email;
             const query = { email: email };
@@ -121,6 +130,8 @@ async function run() {
             res.status(403).send({ accessToken: '' })
         });
 
+
+        // for categories
         app.get('/categories', async (req, res) => {
             const query = {}
             const categories = await categoriesCollections.find(query).toArray();
@@ -134,6 +145,7 @@ async function run() {
             res.send(result);
         });
 
+        // seller's addProduct,myProducts
         app.post('/addProduct', async (req, res) => {
             const query = req.body;
             console.log(query);
@@ -148,6 +160,47 @@ async function run() {
             res.send(bookings);
         });
 
+        // delete products of seller
+        app.delete('/users/seller/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) }
+            const result = await productsCollections.deleteOne(filter);
+            res.send(result);
+        });
+
+        // advertising for seller
+        app.post('/advertisedItems', async (req, res) => {
+            const advertised = req.body;
+            const query = {
+                _id: advertised._id,
+            }
+            console.log(query);
+            const alreadyBooked = await advertisedCollection.find(query).toArray();
+            if (alreadyBooked.length > 0) {
+                const message = `You already have advertised ${advertised.name}`
+                return res.send({ acknowledged: false, message })
+            }
+            const result = await advertisedCollection.insertOne(advertised);
+            res.send(result);
+        });
+
+        // get all advertised items
+        app.get('/advertisedItems', async (req, res) => {
+            const query = {};
+            const advertised = await advertisedCollection.find(query).toArray();
+            res.send(advertised);
+        });
+
+        // delete advertised items
+        app.delete('/advertisedItems/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) }
+            console.log(filter);
+            const result = await advertisedCollection.deleteOne(filter);
+            res.send(result);
+        });
+
+        // get all users
         app.get('/users', async (req, res) => {
             const query = {}
             const users = await usersCollection.find(query).toArray();
@@ -160,6 +213,7 @@ async function run() {
             res.send(result);
         });
 
+        // for booking
         app.get('/bookings/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) }
@@ -194,6 +248,80 @@ async function run() {
             res.send(result);
         });
 
+        // wishlist post
+        app.post('/wishlist', async (req, res) => {
+            const wished = req.body;
+
+            const query = {
+                productName: wished.productName,
+                email: wished.email,
+                sellerName: wished.sellerName
+            }
+            console.log(query);
+            const alreadyBooked = await wishlistCollections.find(query).toArray();
+
+            if (alreadyBooked.length > 0) {
+                const message = `You already have wished for ${wished.productName}`
+                return res.send({ acknowledged: false, message })
+            }
+
+            const result = await wishlistCollections.insertOne(wished);
+            res.send(result);
+        });
+
+        // wishlist get
+        app.get('/wishlist', async (req, res) => {
+            const email = req.query.email;
+            const query = { email: email };
+            const bookings = await wishlistCollections.find(query).toArray();
+            res.send(bookings);
+        });
+
+        // reported item post
+        app.post('/reportedItems', async (req, res) => {
+            const wished = req.body;
+
+            const query = {
+                productName: wished.productName,
+                email: wished.email,
+                sellerName: wished.sellerName
+            }
+            console.log(query);
+            const alreadyBooked = await reportedItemsCollection.find(query).toArray();
+
+            if (alreadyBooked.length > 0) {
+                const message = `You already have reported ${wished.productName}`
+                return res.send({ acknowledged: false, message })
+            }
+
+            const result = await reportedItemsCollection.insertOne(wished);
+            res.send(result);
+        });
+
+        // reportedItems get
+        app.get('/reportedItems', async (req, res) => {
+            const query = {};
+            const bookings = await reportedItemsCollection.find(query).toArray();
+            res.send(bookings);
+        });
+
+        // reported items delete
+        app.delete('/reportedItems/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) }
+            const result = await reportedItemsCollection.deleteOne(filter);
+            res.send(result);
+        });
+
+
+
+
+
+
+
+
+
+        // for payment
         app.post('/create-payment-intent', async (req, res) => {
             const booking = req.body;
             const price = booking.price;
