@@ -6,9 +6,11 @@
         "used": "1 Year",
         "sellerName": "Jahidul islam",
         "location": "Chittagong",
-        "originalPrice": "70,000 BDT/=",
-        "resalePrice": "50,000 BDT/=",
-        "img": "https: //i.ibb.co/P960TNz/scooter1.jpg"
+        "condition": "excellent",
+        "originalPrice": 70000,
+        "resalePrice": 50000,
+        "img": "https: //i.ibb.co/P960TNz/scooter1.jpg",
+        "description": "I have purchased this thing and used it very carefully."
     },
     {
         "name": "Yamaha Scooter-401",
@@ -17,9 +19,11 @@
         "used": "1 Year 6 months",
         "sellerName": "Kamal hossain",
         "location": "Dhaka",
-        "originalPrice": "85,000 BDT/=",
-        "resalePrice": "55,000 BDT/=",
-        "img": "https: //i.ibb.co/88vJDLf/scooter2.jpg"
+        "condition": "good",
+        "originalPrice": 850000,
+        "resalePrice": 55000,
+        "img": "https: //i.ibb.co/88vJDLf/scooter2.jpg",
+        "description": "I have purchased this thing and used it very carefully."
     },
     {
         "name": "Hero Honda Spelender",
@@ -28,9 +32,11 @@
         "used": "2 Year 2 months",
         "sellerName": "Tomal hossain",
         "location": "Dhaka",
-        "originalPrice": "1,20,000 BDT/=",
-        "resalePrice": "85,000 BDT/=",
-        "img": "https: //i.ibb.co/hKJkGmH/bike1.jpg"
+        "condition": "fair",
+        "originalPrice": 120000,
+        "resalePrice": 85000,
+        "img": "https: //i.ibb.co/hKJkGmH/bike1.jpg",
+        "description": "I have purchased this thing and used it very carefully."
     },
     {
         "name": "Pulser 150",
@@ -39,9 +45,11 @@
         "used": "1 Year",
         "sellerName": "Jamal hossain",
         "location": "Dhaka",
-        "originalPrice": "1,25,000 BDT/=",
-        "resalePrice": "87,000 BDT/=",
-        "img": "https: //i.ibb.co/C6JPqqG/bike2.jpg"
+        "condition": "excellent",
+        "originalPrice": 125000,
+        "resalePrice": 87000,
+        "img": "https: //i.ibb.co/C6JPqqG/bike2.jpg",
+        "description": "I have purchased this thing and used it very carefully."
     },
     {
         "name": "KTM",
@@ -50,9 +58,11 @@
         "used": "2 Year 6 months",
         "sellerName": "Hasibur Rahman",
         "location": "Khulna",
-        "originalPrice": "3,55,000 BDT/=",
-        "resalePrice": "2,25,000 BDT/=",
-        "img": "https: //i.ibb.co/h9ws4QX/sports1.jpg"
+        "condition": "excellent",
+        "originalPrice": 3550000,
+        "resalePrice": 225000,
+        "img": "https: //i.ibb.co/h9ws4QX/sports1.jpg",
+        "description": "I have purchased this thing and used it very carefully."
     },
     {
         "name": "R15",
@@ -61,9 +71,11 @@
         "used": "1 Year 6 months",
         "sellerName": "Makdumul Jubaier",
         "location": "Jessore",
-        "originalPrice": "4,96,000 BDT/=",
-        "resalePrice": "3,15,000 BDT/=",
-        "img": "https: //i.ibb.co/7Wgf2bj/sports2.jpg "
+        "condition": "good",
+        "originalPrice": 496000,
+        "resalePrice": 315000,
+        "img": "https: //i.ibb.co/7Wgf2bj/sports2.jpg ",
+        "description": "I have purchased this thing and used it very carefully."
     }
 ]
 /* https: //i.ibb.co/hKJkGmH/bike1.jpg
