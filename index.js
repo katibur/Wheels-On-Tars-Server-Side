@@ -68,7 +68,6 @@ async function run() {
             res.send({ isAdmin: user?.role === 'admin' });
         });
 
-
         // delete any user from AllUsers Route
         app.delete('/users/admin/:id', async (req, res) => {
             const id = req.params.id;
@@ -76,30 +75,6 @@ async function run() {
             const result = await usersCollection.deleteOne(filter);
             res.send(result);
         });
-
-        // app.put("/users/admin/:id", verifyJWT, async (req, res) => {
-        //     const decodedEmail = req.decoded.email;
-        //     const query = { email: decodedEmail };
-        //     const user = await usersCollection.findOne(query);
-        //     if (user?.role !== "admin") {
-        //         return res.status(403).send({ message: "forbidden access" });
-        //     }
-        //     const id = req.params.id;
-        //     const filter = { _id: ObjectId(id) };
-        //     const options = { upsert: true };
-        //     const updatedDoc = {
-        //         $set: {
-        //             status: "verified",
-        //         },
-        //     };
-        //     const result = await usersCollection.updateOne(
-        //         filter,
-        //         updatedDoc,
-        //         options
-        //     );
-        //     res.send(result);
-        // });
-
 
         // verification for seller
         app.get('/users/seller/:email', async (req, res) => {
@@ -194,7 +169,7 @@ async function run() {
         // delete advertised items
         app.delete('/advertisedItems/:id', async (req, res) => {
             const id = req.params.id;
-            const filter = { _id: ObjectId(id) }
+            const filter = { _id: id }
             console.log(filter);
             const result = await advertisedCollection.deleteOne(filter);
             res.send(result);
@@ -312,13 +287,6 @@ async function run() {
             const result = await reportedItemsCollection.deleteOne(filter);
             res.send(result);
         });
-
-
-
-
-
-
-
 
 
         // for payment
